@@ -1,4 +1,9 @@
 import express from "express";
+import morgan from "morgan";
+import helmet from "helmet";
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
+
 const app = express();
 const PORT = 4000;
 
@@ -8,14 +13,17 @@ const handleHome = (requestObject, responseObject) => responseObject.send("Hello
 
 const handleProfile = (requestObject, responseObject) => responseObject.send("You are on my profile."); // 진짜 웹사이트는 Html css를 send 해야 한다.
 
-const betweenHome = (req, res, next) => {
-  console.log("I'm between");
-  next();
-};
+app.use(cookieParser());
+app.use(bodyParser.json({extended: true}));
+app.use(bodyParser.urlencoded({extended: true})); // 갖고 있는 인자가 많다. // 다양한 형식으로 들어오는 유저 정보를 받아들이기 위해!
+app.use(helmet());
+app.use(morgan("dev"));
+
+const middleware = (req, res, next) => {
+  res.send('not happening'); // next() 대신에 res.send가 있는 middleware은 연결을 끊을 수 있다.
+}
 
 app.get("/", handleHome); // 미들웨어를 중간에 넣었다!! 하지만 이 상태에선 구글 크롬으로부터 온 요청을 계속 처리할 지에 대해 권한을 주지 않았다.
-
-app.use(betweenHome); // 모든 웹사이트 사용에 대해서 미들웨어를 넣기 // 순서가 중요하다! // 이 아래에 모든 미들웨어를 둔 다음에 라우트를 처리해야 모든 기록을 받을 수 있다.
 
 app.get("/profile", handleProfile);
 
