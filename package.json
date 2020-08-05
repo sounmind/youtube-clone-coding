@@ -6,9 +6,15 @@
   "author": "Suhyeong Lee",
   "license": "ISC",
   "dependencies": {
+    "@babel/core": "^7.11.1",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.0",
     "express": "^4.17.1"
   },
-  "scripts":{
-    "start": "node index.js"
-  }  
+  "scripts": {
+    "start": "nodemon --exec babel-node index.js"
+  },
+  "devDependencies": {
+
+  }
 }
