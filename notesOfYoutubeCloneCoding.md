@@ -33,3 +33,18 @@
 ### 2.8 Express Core: Routing
 - router란?
     - router란 route들의 복잡함을 쪼개주는데 사용할 수 있다. (/user/password/change/logout ... 이런 식으로 복잡하게 만들어질 때)
+
+### 2.9 MVC Pattern
+- MVC = Model, View, Control
+    - Model 데이터
+    - View 어떻게 그 데이터가 보이나
+    - Control 데이터를 찾는 함수
+    - Pattern 구조
+- divide-conquer 원칙을 따르는 router / routes 구조 만들기
+    - 모든 라우트가 모아져 있는 routes.js
+    - 유형별 라우터
+      - globalRouter
+      - userRouter
+      - videoRouter
+
+#### 
