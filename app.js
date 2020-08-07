@@ -3,11 +3,9 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+import { userRouter } from "./router"; // default로 export하지 않았기 때문에 import할 때도 이렇게 해줘야 한다.
 
 const app = express();
-const PORT = 4000;
-
-const handleListening = () => console.log(`Listening on: http://localhost:${PORT}`);
 
 const handleHome = (requestObject, responseObject) => responseObject.send("Hello from home!");
 
@@ -27,4 +25,6 @@ app.get("/", handleHome); // 미들웨어를 중간에 넣었다!! 하지만 이 상태에선 구글 
 
 app.get("/profile", handleProfile);
 
-app.listen(PORT, handleListening);
+app.use("/user", userRouter)
+
+export default app; // 누군가 내 파일을 import로 불러올 때, app object를 주겠다는 말

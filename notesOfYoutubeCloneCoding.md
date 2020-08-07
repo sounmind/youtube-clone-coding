@@ -20,3 +20,16 @@
     - 예를 들어 form 같은 양식에 적혀져 보내지는 요청 정보(request object)에 서버가 접근하길 원한다면 필요하다. 다시말해, body로부터 정보를 얻을 수 있게 한다.
 - cookie parse
     - session을 다루기 위해 유저의 정보를 쿠키에 저장하기 때문에 필요하다.
+
+---
+
+2020-08-07
+### module
+- init.js, app.js로 파일 구성을 바꾸기.
+    - app.js를 모듈화하여 init.js에서 쓸 수 있도록 하기. 그럼 코드를 공유할 수 있다.
+- 모듈화하려는 파일 끝에 `export default app;`를 적는다.
+- 끌어다 쓰려는 파일 앞에 `import app from "app"`이라 적는다.
+
+### 2.8 Express Core: Routing
+- router란?
+    - router란 route들의 복잡함을 쪼개주는데 사용할 수 있다. (/user/password/change/logout ... 이런 식으로 복잡하게 만들어질 때)
