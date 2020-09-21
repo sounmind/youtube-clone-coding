@@ -158,3 +158,55 @@ Sep 18, 2020
     - express convention으로 검색해보니, [패키지](https://www.npmjs.com/package/express-convention-routes)도 있다!
     - 블로그 글도 있다. [Node.js/Express Convention-Based Routes](https://blog.codewithdan.com/node-js-express-convention-based-routes/) 위 패키지의 사용 제안서 같다...?
 
+## 20-09-21 | Pug, fontawesome, res.locals, render()
+
+---
+
+### 이전부터 나를 괴롭혔던 오류를 고쳐보자...(결국 실패)
+
+---
+
+fontawesome을 링크(css, js)로 불러와지지 않는 오류가 있었다. 구글의 콘텐츠 보안정책이라고 하는데... 아래와 같은 오류 메시지가 뜬다. 
+
+```jsx
+Refused to load the script 'https://kit.fontawesome.com/*ID*.js' because it violates the following Content Security Policy directive: "script-src 'self'". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+```
+
+- 따라서 [구글의 콘텐츠 보안정책 문서](https://developers.google.com/web/fundamentals/security/csp?hl=ko)를 읽어보고 이 문제를 해결할 수 없나? ( 내가 판단하기에 신뢰할 수 있는 사이트, 스크립트 소스이니까 허용해줘! 를 어떻게 알리나 ) 생각해봤다.
+- 결론 → 해결하지 못했다. 아무리 연구해봐도 아이콘이 제대로 나타나지 않고 보안정책 오류가 계속 나온다..ㅠㅠ 일단 여기에 시간이 너무 지체되면 안되니까 그냥 무시하고 진도를 나가도록 하자.
+
+### middleware를 만들고 그 안에서 [res.locals](https://expressjs.com/ko/api.html#res.locals)에 변수를 선언-저장하면 그 변수들을 template에서 쓸 수 있다.
+
+---
+
+```jsx
+// middlewares.js
+import routes from "./routes";
+
+export const localsMiddleware = (req, res, next) => {
+    res.locals.siteName = "WeTube"; // title에 이 변수를 쓸 수 있다.
+    res.locals.routes = routes; // partials/header에서 링크에 routes를 변수처럼 쓸 수 있다.
+    next();
+};
+```
+
+### [render 함수](https://expressjs.com/ko/api.html#res.render)의 첫번째 인자는 템플릿, 두번째 인자는 템플릿에 추가할 정보가 담긴 객체다.
+
+---
+
+```jsx
+// userController.js
+export const join = (req, res) => res.render("join", { pageTitle: "Join" });
+export const login = (req, res) => res.render("login", { pageTitle: "Log In" });
+export const logout = (req, res) => res.render("logout", { pageTitle: "Log Out" });
+export const userDetail = (req, res) => res.render("userDetail", { pageTitle: "User Detail" });
+export const editProfile = (req, res) => res.render("editProfile", { pageTitle: "Edit Profile" });
+export const changePassword = (req, res) => res.render("changePassword", { pageTitle: "Change Password" });
+```
+
+### 오늘 과제의 교훈 Sep 21, 2020 12:22 PM
+
+---
+
+- 난이도는 쉬웠다. 강의 내용을 그대로 복습하고 재생산하는 정도였다. 웹 페이지 구현의 흐름을 어렴풋이 파악할 수 있었다.
+- fontawesome과 구글보안정책은 ... 도저히 어떻게 해야할지 모르겠다. 나중에 슬랙 커뮤니티에 질문을 해봐야겠다.
