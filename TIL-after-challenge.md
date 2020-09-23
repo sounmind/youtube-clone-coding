@@ -210,3 +210,70 @@ export const changePassword = (req, res) => res.render("changePassword", { pageT
 
 - 난이도는 쉬웠다. 강의 내용을 그대로 복습하고 재생산하는 정도였다. 웹 페이지 구현의 흐름을 어렴풋이 파악할 수 있었다.
 - fontawesome과 구글보안정책은 ... 도저히 어떻게 해야할지 모르겠다. 나중에 슬랙 커뮤니티에 질문을 해봐야겠다.
+
+## 20-09-22 | 복습 및 퀴즈
+
+---
+
+- middleware(미들웨어), route(라우트), router(라우터), MVC pattern 개념을 복습했다.
+    1. middleware는 3개의 함수 인자, request, response, next를 가진다
+        1. request는 url로부터 들어온 정보를 다룬다. response는 서버가 클라이언트로 전송하는 내용을 다룬다. `next()`는 다음 middleware를 호출한다.
+    2. 라우트들은 곧 미들웨어이다. `response.end()`로 연결을 끊을 수 있다.
+    3. `app.use(<ROUTER>)`으로 해당 라우터를 어플리케이션에서 사용할 수 있다.
+    4. `app.get()`은 GET requests에 의해 호출되고 `app.use()`는 모든 requests에 의해 호출된다.
+    5. MVC는 Model View Controller를 뜻하는 디자인 패턴이다. 모델은 데이터를 저장하고 뷰는 사용자가 실제로 보는 것이고, 컨트롤러는 웹페이지 내부 로직을 담당한다.
+
+## 20-09-23 | 복습 및 퀴즈 |
+
+---
+
+- express가 pug를 사용하도록 하기 ( 선언, 디렉토리 설정, 렌더링)
+
+### 선언
+
+---
+
+- `app.set("view engine", "pug")`
+- `app.set("views", "/myDirectory")` → 커스텀 디렉토리 설정
+- `res.render(<Template_name>)` → render()함수에 첫번째 인자로 템플릿인 pug 파일 이름을 넣어주면 된다.
+    - `res.render(<Template_name>, {name: "<Your_name>"})` → 컨트롤러에서 렌더링할 때 두번째 인자로 변수이름을 선언하고 값을 대입할 수 있다.
+
+        ```jsx
+        // userController.js
+        export const join = (req, res) => res.render("join", { pageTitle: "Join" });
+        export const login = (req, res) => res.render("login", { pageTitle: "Log In" });
+        export const logout = (req, res) => res.render("logout", { pageTitle: "Log Out" });
+        export const userDetail = (req, res) => res.render("userDetail", { pageTitle: "User Detail" });
+        export const editProfile = (req, res) => res.render("editProfile", { pageTitle: "Edit Profile" });
+        export const changePassword = (req, res) => res.render("changePassword", { pageTitle: "Change Password" });
+        ```
+
+### 디렉토리 설정
+
+---
+
+- `/views` → pug 파일들이 들어가는 디렉토리 ( 현재 디폴트로 설정된 폴더)
+    - `/layouts` → 레이아웃 폴더,
+        - `main.pug` → 메인 페이지로 쓸 html 파일
+    - `/partials` → 재사용이 많이 되는 html의 일부분
+        - `footer.pug`
+        - `header.pug`
+    - 기타 다른 페이지의 pug 파일들 ( login.pug, home.pug, deleteVideo.pug ... )
+
+### pug의 편리한 html tag 사용법
+
+---
+
+- `<span class="className">` == `span.hello`
+- `<div class="className"></div>`==`div.hello`==`.hello`
+- `middlewares.js`
+
+    ```jsx
+    import routes from "./routes";
+
+    export const localsMiddleware = (req, res, next) => {
+        res.locals.siteName = "WeTube"; // title에 이 변수를 쓸 수 있다.
+        res.locals.routes = routes; // partials/header에서 링크에 routes를 변수처럼 쓸 수 있다.
+        next();
+    };
+    ```
