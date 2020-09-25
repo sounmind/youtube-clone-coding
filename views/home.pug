@@ -5,7 +5,9 @@ block content
     .videos <!-- 'h1=' 처럼 붙여 써줘야 함! -->
         each video in videos
             +videoBlock({
+                id : video.id,
                 title : video.title,
-                views : video.description,
+                views : video.views,
+                description : video.description,
                 videoFile: video.videoFile
             })
