@@ -4,7 +4,7 @@ export const getJoin = (req, res) => {
     res.render("join", { pageTitle: "Join" });
 }
 export const postJoin = (req, res) => {
-    const { // ES6 방식!
+    const { // ES6 방식! req로부터 요소 받아들이기
         body: {name, email, password, passwordV}
     } = req;
     
@@ -19,9 +19,18 @@ export const postJoin = (req, res) => {
     }
 }
 
+export const getLogin = (req, res) => {
+    res.render("login", { pageTitle: "Log In" });
+}
+export const postLogin = (req, res) => {
+    // To Do: 사용자 비밀번호가 데이터베이스에 있는 것과 같은지 검사해야 함
+    res.redirect(routes.home);
+}
 
-export const login = (req, res) => res.render("login", { pageTitle: "Log In" });
 export const logout = (req, res) => res.render("logout", { pageTitle: "Log Out" });
+
+
+
 export const userDetail = (req, res) => res.render("userDetail", { pageTitle: "User Detail" });
 export const editProfile = (req, res) => res.render("editProfile", { pageTitle: "Edit Profile" });
 export const changePassword = (req, res) => res.render("changePassword", { pageTitle: "Change Password" });
