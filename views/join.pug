@@ -8,5 +8,5 @@ block content
             input(type="password", name="password", placeholder="Password")
             input(type="password", name="passwordV", placeholder="Verify Password")
             input(type="submit", value="Join now")
-        a.form--container__link(href=routes.changePassword) Change Password
+        a.form--container__link(href=`/users${routes.changePassword}`) Change Password
         include partials/socialLogin

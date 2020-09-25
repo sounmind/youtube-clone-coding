@@ -1,5 +1,7 @@
 extends layouts/main
 
 block content
-    .videos
-        h1 Video
+    .videos <!-- 'h1=' 처럼 붙여 써줘야 함! -->
+        each video in videos
+            h1= video.title 
+            p= video.description
