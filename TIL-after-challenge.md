@@ -277,3 +277,198 @@ export const changePassword = (req, res) => res.render("changePassword", { pageT
         next();
     };
     ```
+
+## 20-09-24 | 강의 듣기(~#2.20)
+
+---
+
+### #2.18 | Search Controller
+
+---
+
+1. views
+    - form을 만들어 사용자의 입력 정보를 get method로 정보를 정해진 url로 보낸다.
+
+    ```html
+    .header__column
+            form(action=routes.search, method="get") <!-- 폼을 제출하면 get 방식으로 정보를 가진채 routes.search로 url 이동. /search?term=<somethingYouTyped> -->
+                input(type="text", placeholder="Search by term...", name="term")
+    ```
+
+2. controller
+    - controller가 query에 접근하려면 method가 get이어야 한다.
+    - request 객체에서 내가 원하는 요소를 찾는다.
+
+        ```jsx
+        export const search = (req, res) => {
+            const {query: { term: searchingBy } } = req; // ES6 이전의 방식: const searchingBy = req.query.term;
+            res.render("search", { pageTitle: "Search", searchingBy: searchingBy }); // 그냥 serachingBy만 입력해줘도 Babel이 같은 의미로 해석해준다.
+        }
+        ```
+
+    - 그것을 랜더링 한다.
+3. views
+    - 출력 결과를 사용자에게 보여준다.
+
+    ```html
+    extends layouts/main
+
+    block content
+        .search_header
+            h3 Searching by #{searchingBy} <!-- 이것이 보이려면 컨트롤러를 수정해야 함 -->
+    ```
+
+### #2.19 | Join, Log In HTML
+
+---
+
+- pug 에서 띄워 쓴 텍스트를 작성할 때 첫 단어를 태그로 취급하므로 `|`를 앞에 써줘서 `|`뒤가 텍스트라는 것을 알려줄 수 있다.
+
+### #2.20 | Change Profile HTML
+
+---
+
+- edit-profile , id 인식 오류
+
+## 20-09-25 | 강의 듣기(~#2.25)
+
+---
+
+### #2.21 | Home Controller
+
+---
+
+1. fake db (비디오 정보의 배열)를 만들고 export 한 다음
+2. video controller로 배열을 전달했다.
+3. home.pug 템플릿에서 each in 함수를 써서 배열을 반복 출력했다.
+    - `h1=`, `p=`처럼 `=`을 붙여 써줘야 한다.
+
+        ```html
+        extends layouts/main
+
+        block content
+            .videos
+                each video in videos
+                    h1= video.title
+                    p= video.description
+        ```
+
+### #2.22 | Home Controller Part Two | mixin: 웹사이트에서 반복되는 html를 재사용하기
+
+---
+
+- 목표: home에서도 비디오가 보이고, 누군가의 profile에서도 그 비디오를 볼 수 있어야 한다.
+- mixin은 pug 함수의 일종
+
+> 또, CSP 이슈가 터졌다... 개 같은 거
+
+코멘트를 읽어보자.
+
+> 미디어 소스나 폰트어썸 사용 안되시는 분들이 많은 것 같은데 앞서 추가했던 helmet의 미들웨어 중에 helmet.contentSecurityPolicy()이 원인이 되는 것 같습니다. 과거에는 app.use(helmet())을 사용할 경우 기본적인 보안설정만 해주었는데 현재는 csp설정도 포함되어 이러한 문제가 발생하는 것 같습니다.
+참조 링크:
+[https://www.npmjs.com/package/helmet](https://www.npmjs.com/package/helmet)
+[https://7stocks.tistory.com/94](https://7stocks.tistory.com/94)
+[https://www.npmjs.com/package/helmet-csp](https://www.npmjs.com/package/helmet-csp)
+
+> 밑에 @luceverus 님 댓글 덕분에 저도 찾아봤는데, 우리가 미들웨어어 넣어놓은 helmet 에서 contentSecurityPolicy()를 해놔서 동영상이 안나오는것 같아요.
+그래서 찾아보니까
+app.use(helmet()); 에서
+app.use( helmet({ contentSecurityPolicy: false, })); 로 설정 하면 contentSecurityPolicy만 끌 수 있어요. 당분간 이렇게 쓰시고 나중에는 보안을 위해서 다시 app.use(helmet());로 하는게 좋을듯 해요.
+
+### #2.23 | Join Controller
+
+---
+
+> 로직 → 누군가가 회원가입을 하면 자동으로 Login이 된 상태로 Home 화면으로 이동하고 싶다.
+
+1. userController의 join 함수 변경 → getJoin, postJoin 으로 분리
+    - /join 경로로 POST 하기 위한 설정이나 코드가 아직 없기 때문.
+    - Join form을 작성하면 post 방식으로 받아 들이도록 한다.
+        - 라우터와 컨트롤러를 적절히 변경한다.
+
+    ```jsx
+    // globalRouter.js
+    import express from "express";
+    import routes from "../routes";
+    import { home, search } from "../controllers/videoController";
+    import { getJoin, postJoin, login, logout } from "../controllers/userController";
+
+    const globalRouter = express.Router();
+
+    globalRouter.get(routes.join, getJoin);
+    globalRouter.post(routes.join, postJoin);
+    ```
+
+    ```jsx
+    // userController.js
+    import routes from "../routes";
+
+    export const getJoin = (req, res) => {
+        res.render("join", { pageTitle: "Join" });
+    }
+    export const postJoin = (req, res) => {
+        const {
+            body: {name, email, password, passwordV}
+        } = req;
+        
+        // 비밀번호 체크
+        if(password != passwordV) {
+            res.status(400); // 잘못된 요청이라는 상태 코드 전달
+            res.render("join", { pageTitle: "Join" });
+        } else {
+            // To Do: Register User 유저 등록
+            // To Do: Log User In 로그인 된 채로 home 접속
+            res.redirect(routes.home);
+        }
+    }
+    ```
+
+- 상태 코드status code → 웹 사이트가 이해할 수 있는 코드
+
+### #2.24 | Log In and User Profile Controller
+
+---
+
+1. login도 postLogin과 getLogin으로 분리
+2. middleware.js에서 로그인 여부를 확인하기 위한 fake data 추가
+3. header.pug 변경
+    - 로그인이 확인되면, upload, profile, log out 이 나타나도록 수정
+
+    > profile을 클릭했을 때 `/:id`로 가는 경로에 문제가 있다.
+
+    > express는 저 `:id`를 id라는 변수에 있는 값을 대입하는 것으로 '잘' 이해하지만 html 은 그렇지 않다!
+
+    - routes.js의 userDetail을 함수로 바꾼다.
+    - userRouter.js에서 userDetail을 위에서 바꾼대로 변경해준다. 함수가 실제로 실행되어 id 값을 리턴해야 된다.
+    - 하지만 템플릿에서는 인자 없이 실행되면 안 된다. user.id를 인자로 입력해야 한다.
+        - header.pug 변경
+    - 경로에 id가 들어가 있는 videoDetail도 수정해야 한다.
+        - routes.js에서 routes 객체에서 videoDetail을 함수로 만들어주기
+
+### #2.25 | More Controllers ( video detail, logout, upload )
+
+---
+
+> 비디오를 클릭하면 비디오 상세 설명 페이지로 이동하도록 하고 싶다.
+
+- videoBlock.pug에서 mixin 안의 내용을 수행한다. 비디오 제목과 조회수를 클릭하면 비디오 상세페이지로 가도록 링크를 만든다.
+    - 라우트를 써줄 때 videoDetail의 경우 함수이니 videoDetail()처럼 괄호를 붙여줘야 하고 템플릿에서는 함수에 인자가 필요하므로 인자를 넣어준다. videoDetail(video.id)
+    - id를 받도록 home.pug에서도 id를 적어준다.
+- 오류가 생겼는데, videoRouter에서 route를 적어줄 때 괄호를 적어주지 않아 함수로 취급이 안되어서 그렇다.
+
+> log out
+
+- 로그아웃 프로세싱은 나중으로 미루고
+- home으로 리다이렉트 시키도록 작성
+
+> upload
+
+- 기존 경로는 /upload인데, /videos/upload로 가야한다.
+- header.pug에서 수정
+- upload.pug 수정
+    - getUpload와 postUpload로 분리
+- videoController.js 수정
+    - postUpload 함수가 특정(임의로 fakeDB에 있는 id값 입력) id의 videoDetail 페이지로 리다이렉트
+- videoRouter.js 수정
+
+> 폼 입력에 required=true 추가
