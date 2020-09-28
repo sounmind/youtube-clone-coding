@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
 // 해당 경로에 string으로 된 DB를 요청
 mongoose.connect(
-  "mongodb://localhost:27017/we-tube",
+  process.env.MONGO_URL,
   { // 새로운 버전의 Mongoose의 기능, DB 연결할 때마다 configuration 설정
     useNewUrlParser: true,
     userFindAndModify: false
