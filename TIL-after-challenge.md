@@ -472,3 +472,143 @@ app.use( helmet({ contentSecurityPolicy: false, })); 로 설정 하면 contentSe
 - videoRouter.js 수정
 
 > 폼 입력에 required=true 추가
+
+## 20-09-24 ~ 25 코드 챌린지
+
+---
+
+- 필요했던 개념
+    - 서버 동작 방식, 특히 컨트롤러
+    - PUG 와 Mixin
+    - GET, POST 요청에서 어떻게 원하는 내용을 추출할 것인가
+    - API 함수 불러온 것 이해하고 사용하기
+    - 방대한 JSON 데이터 자료에서 원하는 내용을 어떻게 추출할 것인가
+
+## 20-09-28 | ~ #3.4 | 강의 듣고 퀴즈
+
+---
+
+1. 컨트롤러에서, `/user/:id`와 같은 라우트의 ID는
+    - `req.params.id` 를 사용해 얻을 수 있다.
+2. 컨트롤러에서 `/user?id=123`와 같은 라우트의 ID는
+    - `req.query.id`를 사용해 얻을 수 있다.
+3. Form 에서 POST와 GET 메소드 차이 알기
+4. MongoDB의 특징에 대해 알기
+5. Mongo와 Mongoosejs의 차이 알기
+6. dotenv가 무엇이며 왜 사용하는지 알기
+7. Schema는 무엇인가
+8. Mongo는 데이터를 어떻게, 어떤 형식으로 저장하는가?
+9. 다른 모델의 데이터를 어떻게 저장할 것인가?
+10. `함수 이름`과 `함수 이름()`의 차이
+11. Mongoose에게 특정 스키마의 모델을 만들었다고 선언하고, export하고, 첫 시작할 때 DB를 연결하는 과정 이해
+
+### #3.0 | MongoDB
+
+---
+
+- mongoDB 다운로드
+    - noSQL
+        - 규칙이 적고 유연해서 많은 부분을 수정할 수 있다.
+- mongoDB adapter → mongoosejs 다운로드
+
+### #3.1 | Connecting to MongoDB
+
+---
+
+- dotenv 설치 ( 묻지도 따지지도 말고)
+    - DB를 숨기고 싶을 때
+- db.js 다 지우고 mongoDB 연결하기
+- videoController에서 db.js import 하는 것 지우기
+
+### #3.2 | Configuring Dot Env
+
+---
+
+- .env 파일을 만들고 그곳에 숨기고 싶은 키나 정보를 저장
+- 키를 쓰고 싶은 js 파일에서 import 한 다음, `process.env.<변수이름>`으로 끌어다 쓸 수 있다.
+
+    ```jsx
+    import dotenv from "dotenv"
+    dotenv.config();
+    const PORT = process.env.PORT || 4000;
+    ```
+
+### #3.3 | Video Model
+
+---
+
+- Model 폴더를 만들고 그 안에 Video.js 파일 만들기
+    - VideoSchema 작성
+        - [Mongoose 스키마 정의 공식 문서](https://mongoosejs.com/docs/guide.html#definition)
+
+### #3.4 | Comment Model
+
+---
+
+- /Model/Comment.js 파일 만들고 CommentSchema 작성하기
+- Comment와 Video를 어떻게 연결할 것인가?
+    1. Comment에 Video ID 연결하기
+    2. Video에 Comment ID 연결하기
+
+```jsx
+// Models/Video.js
+import mongoose from "mongoose";
+
+const VideoSchema = new mongoose.Schema({
+    fileUrl: {
+        type: String,
+        required: 'File URL is required',
+    },
+    title: {
+        type: String,
+        required: "Title is required",
+    },
+    description: String,
+    views: {
+        type: Number,
+        default: 0
+    },
+    createAt: {
+        type: Date,
+        default: Date.now
+    },
+    // 비디오-댓글 연결 첫번째 방법
+    // video: 1, // 비디오 ID
+    
+    // 비디오-댓글 연결 두번째 방법
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment"
+    }]
+});
+
+const model = mongoose.model("Video", VideoSchema);
+export default model;
+```
+
+```jsx
+// Models/Comment.js
+import mongoose from "mongoose";
+
+const CommentSchema = new mongoose.Schema({
+    text: {
+        type: String,
+        required: "Text is required"
+    },
+    createAt: {
+        type: Date,
+        default: Date.now
+    },
+    
+    // 비디오 댓글 연결 첫번째 방법
+    // video: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Video"
+    // }
+})
+
+const model = mongoose.model("Comment", CommentSchema);
+export default model;
+```
+
+- init.js에 comment 모델 import 하기
