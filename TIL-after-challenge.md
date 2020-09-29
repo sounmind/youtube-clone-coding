@@ -612,3 +612,33 @@ export default model;
 ```
 
 - init.js에 comment 모델 import 하기
+
+## 20-09-29 | 코드 챌린지 | Forms and Redirects
+
+---
+
+- 알아야 했던 것
+    - FORM 지식
+        - [textarea](https://www.codingfactory.net/11611)
+    - 문자열 쪼개기 [split()](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/String/split)
+    - 컨트롤러 함수 작성
+
+        ```jsx
+        // movieController.js
+
+        // other functions
+
+        export const postAddMovie = (req, res) => {
+          const {
+            body: { title, synopsis, genres }
+          } = req;
+          const genresSplit = genres.split(",");
+          const movie = {
+            title: `${title}`,
+            synopsis: `${synopsis}`,
+            genres: genresSplit
+          };
+          addMovie(movie);
+          res.redirect("/");
+        };
+        ```
