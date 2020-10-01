@@ -48,9 +48,51 @@ export const postUpload = async (req, res) => {
   res.redirect(routes.videoDetail(newVideo.id));
 };
 
-export const videoDetail = (req, res) =>
-  res.render("videoDetail", { pageTitle: "Video Detail" });
-export const editVideo = (req, res) =>
-  res.render("editVideo", { pageTitle: "Edit Video" });
+export const videoDetail = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  try {
+    const video = await Video.findById(id);
+    console.log(video);
+    res.render("videoDetail", { pageTitle: "Video Detail", video, routes });
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.home);
+  }
+};
+export const getEditVideo = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  try {
+    const video = await Video.findById(id);
+    console.log(video);
+    res.render("editVideo", {
+      pageTitle: `Edit ${video.title}`,
+      video,
+      routes,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.home);
+  }
+};
+
+export const postEditVideo = async (req, res) => {
+  const {
+    params: { id },
+    body: { title, description }, // form에서 가져온 새로 씌여질(update될) 새로운 내용
+  } = req;
+  try {
+    // findOneAndUpdate의 첫번째 인자는 이 id를 가지고 있는 모델을 가리킨다. 따라서 이 아이디가 가리키고 있는 모델의 요소(두번째 인자의 요소)의 값을 update 한다.
+    await Video.findOneAndUpdate({ _id: id }, { title, description }); // {title: title, description: description} 으로 좌측은 Key이고, 우측의 Value가 새로 씌여질 내용이다.
+    res.redirect(routes.videoDetail(id));
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.home);
+  }
+};
+
 export const deleteVideo = (req, res) =>
   res.render("deleteVideo", { pageTitle: "Delete Video" });
