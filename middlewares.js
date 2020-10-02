@@ -1,5 +1,5 @@
-import routes from "./routes";
 import multer from "multer";
+import routes from "./routes";
 
 export const localsMiddleware = (req, res, next) => {
   res.locals.siteName = "WeTube"; // title에 이 변수를 쓸 수 있다.
