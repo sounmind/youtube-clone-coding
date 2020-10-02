@@ -14,14 +14,23 @@ export const home = async (req, res) => {
   }
 };
 
-export const search = (req, res) => {
+export const search = async (req, res) => {
   const {
     query: { term: searchingBy },
   } = req;
+  let videos = [];
+  try {
+    videos = await Video.find({
+      title: { $regex: searchingBy, $options: "i" },
+    });
+  } catch (error) {
+    console.log(error);
+  }
   // ES6 이전의 방식: const searchingBy = req.query.term;
   res.render("search", {
     pageTitle: "Search",
     searchingBy,
+    videos,
   }); // 그냥 serachingBy만 입력해줘도 Babel이 같은 의미로 해석해준다.
 };
 
