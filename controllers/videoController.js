@@ -1,16 +1,16 @@
 import routes from "../routes";
 import Video from "../models/Video";
-import { render } from "pug";
 
 export const home = async (req, res) => {
   // async와 await 사용
   try {
-    const videos = await Video.find({}); // 모든 비디오를 찾음 // error가 생겨도 다음 줄 실행 -> try catch 필요
+    const videos = await Video.find({}).sort({ _id: -1 });
+    // 모든 비디오를 찾음 // error가 생겨도 다음 줄 실행 -> try catch 필요
     // render 함수의 첫번째 인자는 템플릿, 두번째 인자는 템플릿에 추가할 정보가 담긴 객체다.
-    res.render("home", { pageTitle: "Home", videos: videos });
+    res.render("home", { pageTitle: "Home", videos });
   } catch (error) {
     console.log(error);
-    render.render("home", { pageTitle: "Home", videos: [] });
+    res.render("home", { pageTitle: "Home", videos: [] });
   }
 };
 
@@ -21,8 +21,7 @@ export const search = (req, res) => {
   // ES6 이전의 방식: const searchingBy = req.query.term;
   res.render("search", {
     pageTitle: "Search",
-    searchingBy: searchingBy,
-    videos,
+    searchingBy,
   }); // 그냥 serachingBy만 입력해줘도 Babel이 같은 의미로 해석해준다.
 };
 
@@ -34,10 +33,9 @@ export const getUpload = (req, res) => {
 
 export const postUpload = async (req, res) => {
   const {
-    body: { title: title, description: description },
-    file: { path: path },
+    body: { title, description },
+    file: { path },
   } = req;
-
   // 비디오 데이터베이스에 데이터 추가
   const newVideo = await Video.create({
     fileUrl: path,
@@ -85,7 +83,8 @@ export const postEditVideo = async (req, res) => {
     body: { title, description }, // form에서 가져온 새로 씌여질(update될) 새로운 내용
   } = req;
   try {
-    // findOneAndUpdate의 첫번째 인자는 이 id를 가지고 있는 모델을 가리킨다. 따라서 이 아이디가 가리키고 있는 모델의 요소(두번째 인자의 요소)의 값을 update 한다.
+    // findOneAndUpdate의 첫번째 인자는 이 id를 가지고 있는 모델을 가리킨다.
+    // 따라서 이 아이디가 가리키고 있는 모델의 요소(두번째 인자의 요소)의 값을 update 한다.
     await Video.findOneAndUpdate({ _id: id }, { title, description }); // {title: title, description: description} 으로 좌측은 Key이고, 우측의 Value가 새로 씌여질 내용이다.
     res.redirect(routes.videoDetail(id));
   } catch (error) {
