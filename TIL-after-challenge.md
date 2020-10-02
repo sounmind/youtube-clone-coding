@@ -711,5 +711,75 @@ export const uploadVideo = multerVideo.single("videoFile"); // form에서 받아
 // .single(fieldname): 인자에 명시된 이름의 단수 파일을 전달 받는다. 이 파일은 req.file에 저장된다.
 ```
 
-- 이해완료!
-- 시간이 많이 지났으므로, 내일 또 듣자!
+### #3.8 | Getting Video by ID
+
+---
+
+1. `"/:<name>"`으로 라우트에 작성하면, `req.params`으로 url에 입력된 경로를 `name`이라는 이름으로 받아들일 수 있다.
+
+### #3.9 | Editing a Video
+
+---
+
+1. videoController.js 수정
+2. videoDetail.pug 수정
+3. routes.js 수정
+4. videoRouter.js 수정
+
+### #3.10 | Delete Video
+
+---
+
+> url로부터 id를 받아와서 해당 비디오를 삭제하기
+
+### #3.11 | Installing ESLint
+
+---
+
+- Home 화면 비디오 최근 것이 상단에 노출되도록 정렬하기
+
+> [ESLint](https://eslint.org/)는 무엇인가?
+
+- JavaScript 코드에서 발견 된 문제 패턴을 식별하기위한 정적 코드 분석 도구
+- ESLint를 설치하고 Prettier와 잘 호환되도록 설정하기
+    - `npm install eslint`
+    - [eslint-plugin-prettier](https://github.com/prettier/eslint-plugin-prettier) → 여기의 설명대로 설치하기
+- [ ]  LF 와 CRLF는 무엇이고 어떤 차이가 있을까? → [블로그 설명](https://technote.kr/300)
+
+    > CR, LF는 컴퓨터에서 줄바꿈을 의미하는 용어들이다.
+    종이를 아래에서 위로 종이를 올려가며 썼던 옛날 타자기를 떠올리고 생각하면 좋다.
+
+    - **CR : Carriage Return (\r) → 커서를 줄 올림 없이 줄 맨 앞으로 옮김**
+    - **LF : Line Feed (\n) → 커서는 그대로 두고 줄을 올림**
+    - 한 가지 방식만 사용할 수도 있고 둘 다 사용할 수 있다. 하지만 메모리 낭비를 줄이기 위해 한 가지만 쓰는 것이 선호되기도 한다.
+    - 추가로 참고하면 좋은 링크 - **위키백과 | 새줄 문자**
+
+### #3.12 | Searching Videos
+
+---
+
+- 정규표현식을 알자!
+    - 연습할 때 좋은 사이트 | [regex101](https://regex101.com/)
+
+    ```jsx
+    // videoController.js
+    export const search = async (req, res) => {
+      const {
+        query: { term: searchingBy },
+      } = req;
+      let videos = [];
+      try {
+        videos = await Video.find({
+          title: { $regex: searchingBy, $options: "i" },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      // ES6 이전의 방식: const searchingBy = req.query.term;
+      res.render("search", {
+        pageTitle: "Search",
+        searchingBy,
+        videos,
+      }); // 그냥 serachingBy만 입력해줘도 Babel이 같은 의미로 해석해준다.
+    };
+    ```
