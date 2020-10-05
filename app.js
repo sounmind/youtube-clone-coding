@@ -14,6 +14,7 @@ const app = express();
 app.use(helmet({ contentSecurityPolicy: false })); // 보안 약화
 app.set("view engine", "pug"); // view
 
+app.use("/static", express.static("static"));
 app.use("/uploads", express.static("uploads")); // 프로젝트 안의 uploads 폴더를 찾아 파일 확인하는 미들웨어
 app.use(cookieParser());
 app.use(bodyParser.json());

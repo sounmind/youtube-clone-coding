@@ -7,10 +7,18 @@ const ENTRY_FILE = path.resolve(__dirname, "assets", "js", "main"); // __dirname
 const OUTPUT_DIR = path.join(__dirname, "static");
 
 const config = {
-  entry: ENTRY_FILE,
+  entry: ["@babel/polyfill", ENTRY_FILE], // 브라우저가 이해 못하는 js 를 채워줌
   mode: MODE,
   module: {
     rules: [
+      {
+        test: /\.(js)$/,
+        use: [
+          {
+            loader: "babel-loader",
+          },
+        ],
+      },
       {
         test: /\.(scss)$/, // 모든 scss 파일을 찾아주는 정규식
         use: ExtractCSS.extract([
@@ -22,7 +30,7 @@ const config = {
             loader: "postcss-loader", // 호환성 부여
             options: {
               postcssOptions: {
-                plugin() {
+                plugins() {
                   return [autoprefixer({ browsers: "cover 99.5%" })];
                 },
               },
