@@ -50,4 +50,4 @@ const config = {
   plugins: [new ExtractCSS("styles.css")],
 };
 
-module.exports = config;
+module.exports = config; // export default
