@@ -1,9 +1,10 @@
 import routes from "../routes";
+import User from "../models/User";
 
 export const getJoin = (req, res) => {
   res.render("join", { pageTitle: "Join" });
 };
-export const postJoin = (req, res) => {
+export const postJoin = async (req, res) => {
   const {
     // ES6 방식! req로부터 요소 받아들이기
     body: { name, email, password, passwordV },
@@ -14,7 +15,16 @@ export const postJoin = (req, res) => {
     res.status(400); // 잘못된 요청이라는 상태 코드 전달
     res.render("join", { pageTitle: "Join" });
   } else {
-    // To Do: Register User 유저 등록
+    try {
+      const user = await User({
+        name,
+        email,
+      });
+      User.register(user, password);
+    } catch (error) {
+      console.log(error);
+    }
+
     // To Do: Log User In 로그인 된 채로 home 접속
     res.redirect(routes.home);
   }
