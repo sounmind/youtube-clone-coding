@@ -2,8 +2,85 @@ extends layouts/main
 include mixins/videoBlock
 
 block content
-    .videos <!-- 'h1=' 처럼 붙여 써줘야 함! -->
+    .home-videos
         each video in videos
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
+            +videoBlock({
+                id : video.id,
+                title : video.title,
+                views : video.views,
+                description : video.description,
+                videoUrl: video.fileUrl
+            })
             +videoBlock({
                 id : video.id,
                 title : video.title,
