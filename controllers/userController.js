@@ -38,15 +38,49 @@ export const postLogin = passport.authenticate("local", {
   failureRedirect: routes.login,
 });
 
-// export const githubLogin
+export const githubLogin = passport.authenticate("github"); // passport.js의 github startegy를 사용하게 된다. 그리고 githubLoginCallback 함수를 콜백하게 된다.
 
-export const githubLoginCallback = (accessToken, refreshToken, profile, cb) => {
-  console.log(accessToken, refreshToken, profile, cb);
+export const githubLoginCallback = async (
+  accessToken,
+  refreshToken,
+  profile,
+  cb
+) => {
+  // console.log(accessToken, refreshToken, profile, cb);
+  const {
+    _json: { id, name, avatar_url: avatarUrl, email },
+  } = profile;
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      user.githubId = id;
+      user.save();
+      // 사용자를 찾았을 때 콜백함수(에러메시지=null:없다는 뜻, 유저정보) 실행
+      return cb(null, user);
+    }
+    const newUser = await User.create({
+      email,
+      name,
+      githubId: id,
+      avatarUrl,
+    });
+    return cb(null, newUser);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const postGithubLogin = (req, res) => {
+  res.redirect(routes.home); // github에서 인증받고 돌아온 사용자를 로그인 시켜줌
 };
 
 export const logout = (req, res) => {
-  // To Do: Process log out
+  req.logout(); // passportjs가 쿠키 등등 다 처리해준다고 한다.
   res.redirect(routes.home);
+};
+
+export const getMe = (req, res) => {
+  res.render("userDetail", { pageTitle: "User Detail", user: req.user }); // 현재 로그인 된 사용자 정보(req.user)를 전달한다.
 };
 
 export const userDetail = (req, res) =>
