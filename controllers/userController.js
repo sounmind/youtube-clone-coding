@@ -83,8 +83,19 @@ export const getMe = (req, res) => {
   res.render("userDetail", { pageTitle: "User Detail", user: req.user }); // 현재 로그인 된 사용자 정보(req.user)를 전달한다.
 };
 
-export const userDetail = (req, res) =>
-  res.render("userDetail", { pageTitle: "User Detail" });
+export const userDetail = async (req, res) => {
+  const {
+    params: { id }, // users/:id 의 id를 받는다.
+  } = req;
+  try {
+    const user = await User.findById(id); // id에 해당하는 user를 찾아서 userDetail 페이지에 전달한다.
+    res.render("userDetail", { pageTitle: "User Detail", user });
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.home);
+  }
+};
+
 export const editProfile = (req, res) =>
   res.render("editProfile", { pageTitle: "Edit Profile" });
 export const changePassword = (req, res) =>
