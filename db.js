@@ -7,7 +7,7 @@ dotenv.config();
 mongoose.connect(process.env.MONGO_URL, {
   // 새로운 버전의 Mongoose의 기능, DB 연결할 때마다 configuration 설정
   useNewUrlParser: true,
-  userFindAndModify: false,
+  useFindAndModify: false,
 });
 
 const db = mongoose.connection;

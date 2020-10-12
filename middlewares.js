@@ -10,10 +10,7 @@ export const localsMiddleware = (req, res, next) => {
 };
 
 export const multerVideo = multer({ dest: "uploads/videos/" });
-
-// videoRouter.js에서 쓰임
-export const uploadVideo = multerVideo.single("videoFile"); // form에서 받아온 name = videoFile
-// .single(fieldname): 인자에 명시된 이름의 단수 파일을 전달 받는다. 이 파일은 req.file에 저장된다.
+export const multerAvatar = multer({ dest: "uploads/avatars/" });
 
 // 로그아웃 상태인 경우에만 Join 허용
 export const onlyPublic = (req, res, next) => {
@@ -31,3 +28,9 @@ export const onlyPrivate = (req, res, next) => {
     res.redirect(routes.home);
   }
 };
+
+// videoRouter.js에서 쓰임
+export const uploadVideo = multerVideo.single("videoFile"); // form에서 받아온 name = videoFile
+// .single(fieldname): 인자에 명시된 이름의 단수 파일을 전달 받는다. 이 파일은 req.file에 저장된다.
+
+export const uploadAvatar = multerAvatar.single("avatar");

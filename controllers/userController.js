@@ -96,7 +96,27 @@ export const userDetail = async (req, res) => {
   }
 };
 
-export const editProfile = (req, res) =>
+export const getEditProfile = (req, res) =>
   res.render("editProfile", { pageTitle: "Edit Profile" });
+export const postEditProfile = async (req, res) => {
+  console.log("❤❤❤", req);
+  const {
+    body: { name, email },
+    file,
+    user: { _id: id },
+  } = req;
+  try {
+    await User.findByIdAndUpdate(id, {
+      name,
+      email,
+      avatarUrl: file ? file.path : req.user.avatarUrl, // 프로필 사진을 바꾸지 않았을 경우 처리
+    });
+    res.redirect(routes.me);
+  } catch (error) {
+    console.log(error);
+    res.render("editProfile", { pageTitle: "Edit Profile" });
+  }
+};
+
 export const changePassword = (req, res) =>
   res.render("changePassword", { pageTitle: "Change Password" });
