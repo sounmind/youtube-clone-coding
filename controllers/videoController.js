@@ -48,20 +48,24 @@ export const postUpload = async (req, res) => {
   } = req;
 
   // 유저 객체 생성
-  const user = await User.findById(req.user._id);
+  try {
+    const user = await User.findById(req.user._id);
 
-  // 비디오 데이터베이스에 데이터 추가
-  const newVideo = await Video.create({
-    fileUrl: path,
-    title,
-    description,
-    creator: user._id,
-  });
-  console.log(newVideo);
-  user.videos.push(newVideo.id); // 유저가 업로드한 비디오 목록에 해당 비디오 추가
-  user.save(); // TypeError: req.user.save is not a function -> User 객체의 인스턴스가 필요!
-  req.user.videos.push(newVideo.id); // 미들웨어의 req.user에 최선 정보 업데이트
-  res.redirect(routes.videoDetail(newVideo.id));
+    // 비디오 데이터베이스에 데이터 추가
+    const newVideo = await Video.create({
+      fileUrl: path,
+      title,
+      description,
+      creator: user._id,
+    });
+    user.videos.push(newVideo.id); // 유저가 업로드한 비디오 목록에 해당 비디오 추가
+    user.save(); // TypeError: req.user.save is not a function -> User 객체의 인스턴스가 필요!
+    req.user.videos.push(newVideo.id); // 미들웨어의 req.user에 최선 정보 업데이트
+    res.redirect(routes.videoDetail(newVideo.id));
+  } catch (error) {
+    console.log(error);
+    res.redirect(routes.home);
+  }
 };
 
 export const videoDetail = async (req, res) => {

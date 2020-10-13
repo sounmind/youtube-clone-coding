@@ -5,13 +5,6 @@ export const localsMiddleware = async (req, res, next) => {
   res.locals.siteName = "WeTube"; // title에 이 변수를 쓸 수 있다.
   res.locals.routes = routes; // partials/header에서 링크에 routes를 변수처럼 쓸 수 있다.
   res.locals.loggedUser = req.user || null; //  req object의 user 정보를 local.user로 만들어줌. 처음에 user 정보가 없으면 빈 object 입력되도록
-  console.log(
-    "⭕⭕⭕ LOGGED USER ⭕⭕⭕",
-    req.user._id,
-    req.user.name,
-    req.user.email,
-    req.user.videos
-  );
   next();
 };
 
