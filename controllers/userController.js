@@ -99,7 +99,6 @@ export const userDetail = async (req, res) => {
 export const getEditProfile = (req, res) =>
   res.render("editProfile", { pageTitle: "Edit Profile" });
 export const postEditProfile = async (req, res) => {
-  console.log("❤❤❤", req);
   const {
     body: { name, email },
     file,
@@ -114,9 +113,35 @@ export const postEditProfile = async (req, res) => {
     res.redirect(routes.me);
   } catch (error) {
     console.log(error);
-    res.render("editProfile", { pageTitle: "Edit Profile" });
+    res.redirect(routes.editProfile);
   }
 };
 
-export const changePassword = (req, res) =>
+export const getChangePassword = (req, res) =>
   res.render("changePassword", { pageTitle: "Change Password" });
+
+export const postChangePassword = async (req, res) => {
+  const {
+    body: { oldPassword, newPassword, newPassword1 },
+  } = req;
+  try {
+    if (newPassword !== newPassword1) {
+      // 비밀번호 확인 절차 실패
+      res.status(400); // 브라우저가 비밀번호 바뀌었고 업데이트하라는 팝업이 뜨지 않도록
+      res.redirect(`/users/${routes.changePassword}`);
+      return;
+    }
+    // req.user에 changePassword() 함수가 없음!
+    // await req.user.changePassword(oldPassword, newPassword);
+
+    // DB로부터 다시 User를 불러와 changePassword가 동작할 수 있도록 한다.
+    const user = await User.findById(req.user._id);
+    await user.changePassword(oldPassword, newPassword);
+
+    res.redirect(routes.me);
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    res.redirect(`/users/${routes.changePassword}`);
+  }
+};
