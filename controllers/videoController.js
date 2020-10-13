@@ -55,7 +55,7 @@ export const postUpload = async (req, res) => {
     fileUrl: path,
     title,
     description,
-    creator: user.id,
+    creator: user._id,
   });
   console.log(newVideo);
   user.videos.push(newVideo.id); // 유저가 업로드한 비디오 목록에 해당 비디오 추가
@@ -83,12 +83,18 @@ export const getEditVideo = async (req, res) => {
   } = req;
   try {
     const video = await Video.findById(id);
-    console.log(video);
-    res.render("editVideo", {
-      pageTitle: `Edit ${video.title}`,
-      video,
-      routes,
-    });
+    console.log(video.creator, req.user._id);
+    if (Object.is(video.creator, req.user._id)) {
+      // 비디오 업로드 한 사람과 현재 접속한 사람이 다를 때
+      // 권한이 없는 사용자가 직접 url로 접근할 경우 퇴출
+      throw Error();
+    } else {
+      res.render("editVideo", {
+        pageTitle: `Edit ${video.title}`,
+        video,
+        routes,
+      });
+    }
   } catch (error) {
     console.log(error);
     res.redirect(routes.home);
@@ -116,7 +122,13 @@ export const deleteVideo = async (req, res) => {
     params: { id },
   } = req;
   try {
-    await Video.findOneAndRemove({ _id: id });
+    const video = await Video.findById(id);
+    if (Object.is(video.creator, req.user._id)) {
+      // 권한이 없는 사용자가 직접 url로 접근할 경우 퇴출
+      throw Error();
+    } else {
+      await Video.findOneAndRemove({ _id: id });
+    }
   } catch (error) {
     console.log(error);
   }

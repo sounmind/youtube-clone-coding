@@ -79,8 +79,10 @@ export const logout = (req, res) => {
   res.redirect(routes.home);
 };
 
-export const getMe = (req, res) => {
-  res.render("userDetail", { pageTitle: "User Detail", user: req.user }); // 현재 로그인 된 사용자 정보(req.user)를 전달한다.
+export const getMe = async (req, res) => {
+  const id = req.user._id;
+  const user = await User.findById(id).populate("videos");
+  res.render("userDetail", { pageTitle: "User Detail", user }); // 현재 로그인 된 사용자 정보(req.user)를 전달한다.
 };
 
 export const userDetail = async (req, res) => {
@@ -88,8 +90,14 @@ export const userDetail = async (req, res) => {
     params: { id }, // users/:id 의 id를 받는다.
   } = req;
   try {
-    const user = await User.findById(id); // id에 해당하는 user를 찾아서 userDetail 페이지에 전달한다.
-    res.render("userDetail", { pageTitle: "User Detail", user });
+    // id에 해당하는 user를 찾아서 userDetail 페이지에 전달한다.
+    const user = await User.findById(id).populate("videos");
+    console.log(user);
+    res.render("userDetail", {
+      pageTitle: "User Detail",
+      user,
+      videos: user.videos,
+    });
   } catch (error) {
     console.log(error);
     res.redirect(routes.home);
