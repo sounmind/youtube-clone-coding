@@ -110,6 +110,13 @@ export const postEditProfile = async (req, res) => {
       email,
       avatarUrl: file ? file.path : req.user.avatarUrl, // 프로필 사진을 바꾸지 않았을 경우 처리
     });
+    // 현재 프로필 수정 정보를 미들웨어의 req.user에 업데이트
+    const currentUser = await User.findById(id);
+    req.user.name = currentUser.name;
+    req.user.email = currentUser.email;
+    req.user.avatarUrl = currentUser.avatarUrl;
+    console.log(req.user);
+
     res.redirect(routes.me);
   } catch (error) {
     console.log(error);

@@ -1,5 +1,6 @@
 import routes from "../routes";
 import Video from "../models/Video";
+import User from "../models/User";
 
 export const home = async (req, res) => {
   // async와 await 사용
@@ -45,13 +46,21 @@ export const postUpload = async (req, res) => {
     body: { title, description },
     file: { path },
   } = req;
+
+  // 유저 객체 생성
+  const user = await User.findById(req.user._id);
+
   // 비디오 데이터베이스에 데이터 추가
   const newVideo = await Video.create({
     fileUrl: path,
     title,
     description,
+    creator: user.id,
   });
   console.log(newVideo);
+  user.videos.push(newVideo.id); // 유저가 업로드한 비디오 목록에 해당 비디오 추가
+  user.save(); // TypeError: req.user.save is not a function -> User 객체의 인스턴스가 필요!
+  req.user.videos.push(newVideo.id); // 미들웨어의 req.user에 최선 정보 업데이트
   res.redirect(routes.videoDetail(newVideo.id));
 };
 
@@ -60,8 +69,8 @@ export const videoDetail = async (req, res) => {
     params: { id },
   } = req;
   try {
-    const video = await Video.findById(id);
-    console.log(video);
+    const video = await Video.findById(id).populate("creator");
+    // populate() -> 참조된 데이터베이스를 불러와 그대로 객체로 만들어준다.
     res.render("videoDetail", { pageTitle: video.title, video, routes });
   } catch (error) {
     console.log(error);

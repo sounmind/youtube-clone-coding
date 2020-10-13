@@ -25,9 +25,13 @@ const VideoSchema = new mongoose.Schema({
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
+      ref: "Comment", // 참조-> 관계형 DB
     },
   ],
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // 참조-> 관계형 DB
+  },
 });
 
 const model = mongoose.model("Video", VideoSchema);
