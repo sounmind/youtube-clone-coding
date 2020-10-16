@@ -26,6 +26,16 @@ const sendComment = async (comment) => {
       comment,
     },
   });
+  console.log(response);
+  /* 아래와 같이 출력된다.
+  ...
+  ...
+  config:
+    adapter: ƒ xhrAdapter(config)
+    data: "{"comment":"asdasd"}"
+  ...
+  ...
+  */
   if (response.status === 200) {
     addComment(comment);
   }

@@ -170,14 +170,14 @@ export const postAddComment = async (req, res) => {
     body: { comment },
     user,
   } = req;
-  
+
   try {
     const video = await Video.findById(id);
     const newComment = await Comment.create({
       text: comment,
       creator: user.id,
     });
-    video.comments.push(newComment.id); // 댓글의 id를 푸시를 하네...?
+    video.comments.push(newComment.id); // 댓글의 id를 푸시. 나중에 populate로 id를 오브젝트로 확장시킨다.
     video.save();
   } catch (error) {
     console.log(error);
