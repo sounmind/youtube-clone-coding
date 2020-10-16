@@ -1,6 +1,7 @@
 import routes from "../routes";
 import Video from "../models/Video";
 import User from "../models/User";
+import Comment from "../models/Comment";
 
 export const home = async (req, res) => {
   // async와 await 사용
@@ -73,7 +74,9 @@ export const videoDetail = async (req, res) => {
     params: { id },
   } = req;
   try {
-    const video = await Video.findById(id).populate("creator");
+    const video = await Video.findById(id)
+      .populate("creator")
+      .populate("comments");
     // populate() -> 참조된 데이터베이스를 불러와 그대로 객체로 만들어준다.
     res.render("videoDetail", { pageTitle: video.title, video, routes });
   } catch (error) {
@@ -81,6 +84,7 @@ export const videoDetail = async (req, res) => {
     res.redirect(routes.home);
   }
 };
+
 export const getEditVideo = async (req, res) => {
   const {
     params: { id },
@@ -137,4 +141,48 @@ export const deleteVideo = async (req, res) => {
     console.log(error);
   }
   res.redirect(routes.home);
+};
+
+// Register Video View 조회수 등록
+
+export const postRegisterView = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  try {
+    const video = await Video.findById(id);
+    video.views += 1;
+    video.save();
+    res.status(200); // okay
+  } catch (error) {
+    console.log(error);
+    res.status(400); // not okay
+  } finally {
+    res.end(); // 뭐가 됐든 무조건 요청 끝냄
+  }
+};
+
+// Add Comment 댓글 등록
+
+export const postAddComment = async (req, res) => {
+  const {
+    params: { id },
+    body: { comment },
+    user,
+  } = req;
+  
+  try {
+    const video = await Video.findById(id);
+    const newComment = await Comment.create({
+      text: comment,
+      creator: user.id,
+    });
+    video.comments.push(newComment.id); // 댓글의 id를 푸시를 하네...?
+    video.save();
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+  } finally {
+    res.end();
+  }
 };
