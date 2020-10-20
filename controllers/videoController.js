@@ -186,3 +186,7 @@ export const postAddComment = async (req, res) => {
     res.end();
   }
 };
+
+export const postDeleteComment = async (req, res) => {
+  // 데이터베이스
+};

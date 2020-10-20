@@ -17,6 +17,8 @@ const addComment = (comment) => {
   increaseNumber();
 };
 
+const deleteComment = () => {};
+
 const sendComment = async (comment) => {
   const videoId = window.location.href.split("/videos/")[1];
   const response = await axios({
@@ -48,6 +50,8 @@ const handleSubmit = (event) => {
   sendComment(comment);
   commentInput.value = "";
 };
+
+const handleDelete = (event) => {};
 
 function init() {
   addCommentFrom.addEventListener("submit", handleSubmit);
