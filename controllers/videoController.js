@@ -78,6 +78,7 @@ export const videoDetail = async (req, res) => {
       .populate("creator")
       .populate("comments");
     // populate() -> 참조된 데이터베이스를 불러와 그대로 객체로 만들어준다.
+    console.log(video.comments[0].creator._id);
     res.render("videoDetail", { pageTitle: video.title, video, routes });
   } catch (error) {
     console.log(error);
@@ -175,7 +176,7 @@ export const postAddComment = async (req, res) => {
     const video = await Video.findById(id);
     const newComment = await Comment.create({
       text: comment,
-      creator: user.id,
+      creator: user._id,
     });
     video.comments.push(newComment.id); // 댓글의 id를 푸시. 나중에 populate로 id를 오브젝트로 확장시킨다.
     video.save();
@@ -188,5 +189,21 @@ export const postAddComment = async (req, res) => {
 };
 
 export const postDeleteComment = async (req, res) => {
-  // 데이터베이스
+  const {
+    params: { id },
+  } = req;
+  try {
+    const comment = await Comment.findById(id);
+    if (Object.is(comment.creator, req.user._id)) {
+      // 권한이 없는 사용자가 직접 url로 접근할 경우 퇴출
+      throw Error();
+    } else {
+      await Comment.findOneAndRemove({ _id: id });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+  } finally {
+    res.end();
+  }
 };

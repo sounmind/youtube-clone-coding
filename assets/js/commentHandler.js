@@ -3,9 +3,14 @@ import axios from "axios";
 const addCommentFrom = document.getElementById("jsAddComment");
 const commentList = document.getElementById("jsCommentList");
 const commentNumber = document.getElementById("jsCommentNumber");
+const deleteCommentBtn = document.querySelectorAll("#jsDeleteComment");
 
 const increaseNumber = () => {
   commentNumber.innerHTML = parseInt(commentNumber.innerHTML, 10) + 1;
+};
+
+const decreaseNumber = () => {
+  commentNumber.innerHTML = parseInt(commentNumber.innerHTML, 10) - 1;
 };
 
 const addComment = (comment) => {
@@ -17,7 +22,19 @@ const addComment = (comment) => {
   increaseNumber();
 };
 
-const deleteComment = () => {};
+const deleteComment = async (event) => {
+  const commentId = event.target.parentNode.className;
+  const response = await axios({
+    url: `/api/${commentId}/comment/delete`,
+    method: "POST",
+  });
+  if (response.status === 200) {
+    decreaseNumber();
+    console.log(event.target.parentNode.className);
+    const commentElement = event.target.parentNode;
+    commentElement.parentNode.removeChild(commentElement); // 화면에서 댓글 제거
+  }
+};
 
 const sendComment = async (comment) => {
   const videoId = window.location.href.split("/videos/")[1];
@@ -51,10 +68,15 @@ const handleSubmit = (event) => {
   commentInput.value = "";
 };
 
-const handleDelete = (event) => {};
+const handleDelete = (event) => {
+  deleteComment(event);
+};
 
 function init() {
   addCommentFrom.addEventListener("submit", handleSubmit);
+  deleteCommentBtn.forEach((btn) =>
+    btn.addEventListener("click", handleDelete)
+  );
 }
 
 if (addCommentFrom) {
