@@ -1,3 +1,5 @@
+
+
 import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
@@ -8,6 +10,8 @@ import passport from "passport";
 import "./passport";
 import mongoose from "mongoose";
 import session from "express-session";
+import path from "path";
+
 import MongoStore from "connect-mongo";
 import { localsMiddleware } from "./middlewares";
 import userRouter from "./routers/userRouter";
@@ -24,8 +28,8 @@ const CookieStore = MongoStore(session);
 
 app.use(helmet({ contentSecurityPolicy: false })); // 보안 약화
 app.set("view engine", "pug"); // view
-
-app.use("/static", express.static("static"));
+app.set("views", path.join(__dirname, "views"));
+app.use("/static", express.static(path.join(__dirname, "static")));
 app.use("/uploads", express.static("uploads")); // 프로젝트 안의 uploads 폴더를 찾아 파일 확인하는 미들웨어
 app.use(cookieParser());
 app.use(bodyParser.json());

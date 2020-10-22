@@ -20,10 +20,15 @@ passport.use(
   )
 );
 
-passport.serializeUser(function (user, done) {
-  done(null, user); // 왜 이렇게 하면 github session serialize 오류가 해결되는 것일까?
-});
+// 2020-10-22 commented
+// passport.serializeUser(function (user, done) {
+//   done(null, user); // 왜 이렇게 하면 github session serialize 오류가 해결되는 것일까?
+// });
 
-passport.deserializeUser(function (user, done) {
-  done(null, user);
-});
+// passport.deserializeUser(function (user, done) {
+//   done(null, user);
+// });
+
+// 2020-10-22 added
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());

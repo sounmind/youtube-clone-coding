@@ -1,3 +1,4 @@
+import "@babel/polyfill"; // async function을 사용하기 위해 불러왔던 것
 import dotenv from "dotenv";
 import app from "./app";
 import "./models/Comment";

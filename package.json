@@ -6,8 +6,9 @@
   "author": "Suhyeong Lee",
   "license": "ISC",
   "dependencies": {
-    "@babel/core": "^7.11.1",
-    "@babel/node": "^7.10.5",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.1.5",
+    "@babel/node": "^7.12.1",
     "@babel/polyfill": "^7.11.5",
     "@babel/preset-env": "^7.11.0",
     "autoprefixer": "^10.0.1",
@@ -16,7 +17,8 @@
     "body-parser": "^1.19.0",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "^1.4.5",
-    "core-js": "^3.6.5",
+    "core-js": "^2.6.11",
+    "cp-cli": "^2.0.0",
     "cross-env": "^7.0.2",
     "css-loader": "^1.0.1",
     "dotenv": "^8.2.0",
@@ -37,13 +39,20 @@
     "postcss-loader": "^4.0.3",
     "pug": "^3.0.0",
     "sass-loader": "^7.1.0",
+    "shx": "^0.3.2",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2"
   },
   "scripts": {
-    "dev:server": "nodemon --exec babel-node init.js --delay 2 --ignore 'scss'",
-    "dev:assets": "cross-env WEBPACK_ENV=development webpack -w",
-    "build:assets": "cross-env WEBPACK_ENV=production webpack"
+    "dev:server": "nodemon --exec babel-node src/init.js --delay 2 --ignore 'scss'",
+    "dev:assets": "cd src && cross-env WEBPACK_ENV=development webpack -w",
+    "build:assets": "cd src && cross-env WEBPACK_ENV=production webpack",
+    "build:server": "babel src --out-dir build --ignore 'src/assets','src/static','src/webpack.config.js'",
+    "copyAll": "shx cp -R src/static build && shx cp -R src/views build",
+    "build": "npm run build:server && npm run build:assets && npm run copyAll",
+    "prebuild": "shx rm -rf build",
+    "tunnel": "lt --port 4000",
+    "start": "node build/init.js"
   },
   "devDependencies": {
     "eslint": "^7.10.0",
