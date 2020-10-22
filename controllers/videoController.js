@@ -78,7 +78,6 @@ export const videoDetail = async (req, res) => {
       .populate("creator")
       .populate("comments");
     // populate() -> 참조된 데이터베이스를 불러와 그대로 객체로 만들어준다.
-    console.log(video.comments[0].creator._id);
     res.render("videoDetail", { pageTitle: video.title, video, routes });
   } catch (error) {
     console.log(error);
