@@ -91,7 +91,7 @@ async function setTotalTime() {
   const blob = await fetch(videoPlayer.src).then((response) => response.blob());
   const duration = await getBlobDuration(blob);
   // AWS S3를 사용하고 있다면, S3 CORS configuration에서 설정을 추가해줘야 한다.
-  const totalTimeString = formatDate(videoPlayer.duration);
+  const totalTimeString = formatDate(duration);
   totalTime.innerHTML = totalTimeString;
   setInterval(getCurrentTime, 1000);
 }

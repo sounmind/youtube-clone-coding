@@ -4,10 +4,9 @@ include mixins/videoBlock
 block content
     .user-profile
         .user-profile__header
-            <!--이거 users/<:id>로 들어가면 사진이 안 나온다 ...ㅠㅠㅠ-->
             img.u-avatar(src=`../${user.avatarUrl}`) 
             h4.profile__username=user.name
-        if loggedUser && user.id === loggedUser._id
+        if loggedUser && user.id.toString() === loggedUser._id.toString()
             .user-profile__btns
                 a(href=`/users${routes.editProfile}`)
                     button ✏️ Edit Profile
