@@ -43,9 +43,11 @@ export const getUpload = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+  console.log("✅", req.file);
+  console.log("✅", req.body);
   const {
     body: { title, description },
-    file: { path },
+    file: { location }, // aw3 s3로 파일을 업로드할 때 location에 경로가 저장됨
   } = req;
 
   // 유저 객체 생성
@@ -54,7 +56,7 @@ export const postUpload = async (req, res) => {
 
     // 비디오 데이터베이스에 데이터 추가
     const newVideo = await Video.create({
-      fileUrl: path,
+      fileUrl: location,
       title,
       description,
       creator: user._id,

@@ -116,7 +116,7 @@ export const postEditProfile = async (req, res) => {
     await User.findByIdAndUpdate(id, {
       name,
       email,
-      avatarUrl: file ? file.path : req.user.avatarUrl, // 프로필 사진을 바꾸지 않았을 경우 처리
+      avatarUrl: file ? file.location : req.user.avatarUrl, // 프로필 사진을 바꾸지 않았을 경우 처리
     });
     // 현재 프로필 수정 정보를 미들웨어의 req.user에 업데이트
     const currentUser = await User.findById(id);
